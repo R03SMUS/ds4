@@ -40,7 +40,7 @@ func (n *Node) PassToken(ctx context.Context, req *pb.TokenMessage) (*pb.TokenRe
 	n.hasToken = true
 
 	if n.wantsToken {
-		go n.executeCS()
+		go n.execute()
 	} else {
 		//Little wait, becuase if not, unreadable :3
 		time.Sleep(1 * time.Second)
@@ -69,7 +69,7 @@ func (n *Node) passTokenToNext() {
 }
 
 // Request access to Critical Section
-func (n *Node) requestCS() {
+func (n *Node) requestAccess() {
 	n.mutex.Lock()
 	if n.wantsToken {
 		n.mutex.Unlock()
@@ -80,12 +80,12 @@ func (n *Node) requestCS() {
 	log.Printf("Node %d requesting Critical Section access", n.id)
 
 	if n.hasToken {
-		go n.executeCS()
+		go n.execute()
 	}
 }
 
 // Execute Critical Section
-func (n *Node) executeCS() {
+func (n *Node) execute() {
 	log.Printf("Node %d entering Critical Section", n.id)
 	// Simulate work in Critical Section
 	time.Sleep(3 * time.Second)
@@ -176,7 +176,7 @@ func startNode(id int, hasInitialToken bool) {
 	//Keep requesting access to Critical file
 	for {
 		time.Sleep(time.Duration(2*rand.Int31n(4)) * time.Second)
-		node.requestCS()
+		node.requestAccess()
 	}
 }
 
