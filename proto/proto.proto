@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package mutex;
+
+option go_package = ".";
+
+service MutexService {
+  rpc PassToken(TokenMessage) returns (TokenReply) {}
+}
+
+message TokenMessage {
+  int32 from_id = 1;
+}
+
+message TokenReply {
+  bool ok = 1;
+}
